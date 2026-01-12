@@ -1,4 +1,3 @@
-
 package app;
 
 import static spark.Spark.*;
@@ -10,17 +9,27 @@ public class Main {
         port(8080);
         Gson gson = new Gson();
 
+        // Sunucuları başlatma
         RedisStore.init();
-        HazelcastStore.init();
+        HazelcastStore.init(); 
         MongoStore.init();
 
-        get("/nosql-lab-rd/ogrenci_no=:id", (req, res) ->
-            gson.toJson(RedisStore.get(req.params(":id"))));
+        // Urlmiz : localhost:8080/nosql-lab-rd/student_no=xxxxxxxxxx 
+        // param ifadesi URL'nin sonundaki öğrenci nosuna göre json'ı yakalar
+        
+        get("/nosql-lab-rd/:param", (req, res) -> {
+            res.type("application/json");
+            return gson.toJson(RedisStore.get(req.params(":param")));
+        });
 
-        get("/nosql-lab-hz/ogrenci_no=:id", (req, res) ->
-            gson.toJson(HazelcastStore.get(req.params(":id"))));
+        get("/nosql-lab-hz/:param", (req, res) -> {
+            res.type("application/json");
+            return gson.toJson(HazelcastStore.get(req.params(":param")));
+        });
 
-        get("/nosql-lab-mon/ogrenci_no=:id", (req, res) ->
-            gson.toJson(MongoStore.get(req.params(":id"))));
+        get("/nosql-lab-mon/:param", (req, res) -> {
+            res.type("application/json");
+            return gson.toJson(MongoStore.get(req.params(":param")));
+        });
     }
 }
